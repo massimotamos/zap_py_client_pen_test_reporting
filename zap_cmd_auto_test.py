@@ -72,7 +72,7 @@ min_level = 0
 # Pscan rules that aren't really relevant, eg example alpha rules
 blacklist = ['-1', '50003', '60000', '60001']
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 def usage():
@@ -84,6 +84,7 @@ def usage():
     print ('    -g gen_file       generate default config file (all rules set to WARN)')
     print ('    -m mins           the number of minutes to spider for (default 1)')
     print ('    -k api_key        alphanumeric security key to authenitcate to the ZAP Proxy')
+    print ('    -h hostname       ZAP Proxy hostname. Default is localhost.')
     print ('    -p port_num       ZAP Proxy listening port number. Default is 8080')
     print ('    -r report_html    file to write the full ZAP HTML report')
     print ('    -w report_md      file to write the full ZAP Wiki (Markdown) report')
@@ -173,7 +174,7 @@ def main(argv):
     ignore_count = 0
 
     try:
-        opts, args = getopt.getopt(argv, "t:c:u:g:k:m:p:r:w:x:l:daijsz:")
+        opts, args = getopt.getopt(argv, "t:c:u:g:k:m:h:p:r:w:x:l:daijsz:")
     except getopt.GetoptError, exc:
         logging.warning('Invalid option ' + exc.opt + ' : ' + exc.msg)
         usage()
@@ -399,17 +400,17 @@ def main(argv):
             if len(report_html) > 0:
                 # Save the report
                 with open(base_dir + report_html, 'w') as f:
-                    f.write(zap.core.htmlreport())
+                    f.write(zap.core.htmlreport(apikey=api_key))
 
             if len(report_md) > 0:
                 # Save the report
                 with open(base_dir + report_md, 'w') as f:
-                    f.write(zap.core.mdreport())
+                    f.write(zap.core.mdreport(apikey=api_key))
 
             if len(report_xml) > 0:
                 # Save the report
                 with open(base_dir + report_xml, 'w') as f:
-                    f.write(zap.core.xmlreport())
+                    f.write(zap.core.xmlreport(apikey=api_key))
 
             print ('FAIL: ' + str(fail_count) + '\tWARN: ' + str(warn_count) + '\tINFO: ' + str(info_count) +
                    '\tIGNORE: ' + str(ignore_count) + '\tPASS: ' + str(pass_count))
